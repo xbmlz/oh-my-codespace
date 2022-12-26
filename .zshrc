@@ -21,3 +21,9 @@ export NVM_DIR="$HOME/.nvm"
 # go
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
