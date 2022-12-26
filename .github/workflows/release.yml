@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/oh-my-env
+  IMAGE_NAME: oh-my-env
 
 jobs:
   release:
@@ -35,16 +35,11 @@ jobs:
             return context.payload.ref.replace(/\/?refs\/tags\//, '')
           result-encoding: string
 
-      - name: Build and push
-        id: docker_build
+      - name: Push to DockerHub
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.result }}
-            ${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.result }}
-            ghcr.io/${{ env.IMAGE_NAME }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.result }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
