@@ -34,7 +34,7 @@ jobs:
         with:
           context: .
           push: true
-          tags:
+          tags: |
             - ${{ github.owner }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
             - ${{ github.owner }}/${{ env.IMAGE_NAME }}:latest
             - ghcr.io/${{ github.owner }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
