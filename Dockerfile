@@ -25,7 +25,7 @@ RUN git clone https://gitee.com/mirrors/ohmyzsh.git ~/.oh-my-zsh \
 # Install nvm and default node
 ARG NVM_DIR=/root/.nvm \
     && NODE_VERSION=v16
-RUN curl -o- https://gitee.com/xbmlz/nvm/raw/master/install.sh | bash \
+RUN curl https://gitee.com/mirrors/nvm/raw/master/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
@@ -46,7 +46,8 @@ RUN wget https://studygolang.com/dl/golang/go${GO_VERSION}.linux-amd64.tar.gz \
 ARG PYENV_ROOT=/root/.pyenv \
     && PYTHON_VERSION=3.9.7
 ENV PYTHON_BUILD_MIRROR_URL=https://npm.taobao.org/mirrors/python
-RUN curl https://gitee.com/xbmlz/pyenv-installer/raw/master/bin/pyenv-installer | bash \
+ADD pyenv-installer.sh /tmp/pyenv-installer.sh
+RUN bash /tmp/pyenv-installer.sh \
     && export PATH="$PYENV_ROOT/bin:$PATH" \
     && eval "$(pyenv init -)" \
     && eval "$(pyenv virtualenv-init -)" \
