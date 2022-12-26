@@ -51,7 +51,7 @@ RUN bash /tmp/pyenv-installer.sh \
     && export PATH="$PYENV_ROOT/bin:$PATH" \
     && eval "$(pyenv init -)" \
     && eval "$(pyenv virtualenv-init -)" \
-    && apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev \
+    && apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev liblzma-dev \
     && pyenv install $PYTHON_VERSION \
     && pyenv global $PYTHON_VERSION \
     && pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
