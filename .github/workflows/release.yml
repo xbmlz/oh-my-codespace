@@ -5,6 +5,9 @@ on:
     tags:
       - '*'
 
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/oh-my-env
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -24,20 +27,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
-      - name: Get all docker tags
+      - name: Get docker tag
         uses: actions/github-script@v6
         id: tags
         with:
           script: |
-            const ref = context.payload.ref.replace(/\/?refs\/tags\//, '')
-            const owner = context.repo.owner
-            const tags = [
-              '${owner}/on-my-env:latest',
-              `${owner}/on-my-env:${ref}`,
-              'ghcr.io/${owner}/on-my-env:latest',
-              `ghcr.io/${owner}/on-my-env:${ref}`
-            ]
-            return tags.join(',')
+            return context.payload.ref.replace(/\/?refs\/tags\//, '')
           result-encoding: string
 
       - name: Build and push
@@ -46,6 +41,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{steps.tags.outputs.result}}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.result }}
+            ${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.result }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
