@@ -1,6 +1,6 @@
 # oh-my-env
 
-[![Build Status](https://travis-ci.org/oh-my-env/oh-my-env.svg?branch=master)](https://travis-ci.org/oh-my-env/oh-my-env)
+[![release](https://github.com/xbmlz/oh-my-env/actions/workflows/release.yml/badge.svg)](https://github.com/xbmlz/oh-my-env/actions/workflows/release.yml)
 
 ## What is oh-my-env?
 
