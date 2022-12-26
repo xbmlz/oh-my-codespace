@@ -6,6 +6,9 @@ on:
     tags:
       - '*'
 
+env:
+  IMAGE_NAME: ome
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -32,10 +35,8 @@ jobs:
           context: .
           push: true
           tags:
-            - ${{ github.repository }}:${{ github.ref }}
-            - ${{ github.repository }}:latest
-            - ghcr.io/${{ github.repository }}:${{ github.ref }}
-            - ghcr.io/${{ github.repository }}:latest
-            - docker.pkg.github.com/${{ github.repository }}:${{ github.ref }}
-            - docker.pkg.github.com/${{ github.repository }}:latest
+            - ${{ github.owner }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
+            - ${{ github.owner }}/${{ env.IMAGE_NAME }}:latest
+            - ghcr.io/${{ github.owner }}/${{ env.IMAGE_NAME }}:${{ github.ref }}
+            - ghcr.io/${{ github.owner }}/${{ env.IMAGE_NAME }}:latest
           platforms: linux/amd64,linux/arm64,linux/arm/v7

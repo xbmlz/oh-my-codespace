@@ -11,7 +11,7 @@ RUN apt install -y curl wget git vim zsh zip unzip sed
 
 # Init config dir
 RUN mkdir -p /root/.config
-VOLUME [ "/root/.config", "/root/.local/share/pnpm", "/root/go/bin", "/root/.ssh" ]
+VOLUME [ "/root/.config", "/root/.vscode-server/extensions", "/root/.local/share/pnpm", "/root/go/bin", "/root/.ssh" ]
 
 # Install oh-my-zsh
 ARG ZSH_CUSTOM=/root/.oh-my-zsh/custom
