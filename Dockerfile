@@ -25,7 +25,7 @@ RUN git clone https://gitee.com/mirrors/ohmyzsh.git ~/.oh-my-zsh \
 # Install nvm and default node
 ARG NVM_DIR=/root/.nvm \
     && NODE_VERSION=v16
-RUN curl https://gitee.com/mirrors/nvm/raw/master/install.sh | bash \
+RUN curl -o- https://gitee.com/mirrors/nvm/raw/master/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
