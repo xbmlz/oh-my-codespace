@@ -22,7 +22,7 @@ oh-my-env is docker image for development environment.
 2. create `Dockerfile` in `.devcontainer` directory.
 
 ```Dockerfile
-FROM xbmlz/ome:latest
+FROM xbmlz/on-my-env:latest
 ```
 
 3. create `devcontainer.json` in `.devcontainer` directory.
