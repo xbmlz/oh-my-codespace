@@ -30,11 +30,12 @@ jobs:
         with:
           script: |
             const ref = context.payload.ref.replace(/\/?refs\/tags\//, '')
+            const owner = context.repo.owner
             const tags = [
-              'xbmlz/on-my-env:latest',
-              `xbmlz/on-my-env:${ref}`,
-              'ghcr.io/xbmlz/on-my-env:latest',
-              `ghcr.io/xbmlz/on-my-env:${ref}`
+              '${owner}/on-my-env:latest',
+              `${owner}/on-my-env:${ref}`,
+              'ghcr.io/${owner}/on-my-env:latest',
+              `ghcr.io/${owner}/on-my-env:${ref}`
             ]
             return tags.join(',')
           result-encoding: string
