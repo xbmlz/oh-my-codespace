@@ -4,7 +4,6 @@ FROM ubuntu:latest
 ADD sources.list /etc/apt/sources.list
 
 # Update apt
-SHELL [ "/bin/bash", "-c" ]
 RUN apt update && apt upgrade -y
 
 # Install bascic tools
@@ -70,6 +69,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 # Install sdkman
 ARG SDKMAN_DIR=/root/.sdkman
+SHELL [ "/bin/bash", "-c" ]
 RUN curl -s "https://get.sdkman.io" | bash \
     && . $SDKMAN_DIR/bin/sdkman-init.sh \
     && sdk list java 17.0.5-oracle \
