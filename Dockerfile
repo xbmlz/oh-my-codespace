@@ -54,7 +54,9 @@ RUN bash /tmp/pyenv-installer.sh \
     && apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev liblzma-dev \
     && pyenv install $PYTHON_VERSION \
     && pyenv global $PYTHON_VERSION \
-    && pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+    && pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && curl -sSL https://install.python-poetry.org | python3 - \
+    && poetry config virtualenvs.in-project true 
 
 # Install rust
 ADD .cargo.cn.config /root/.cargo/config
