@@ -30,3 +30,7 @@ eval "$(pyenv virtualenv-init -)"
 
 # poetry
 export PATH="/root/.local/bin:$PATH"
+
+# sdkman
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && \. "$SDKMAN_DIR/bin/sdkman-init.sh"

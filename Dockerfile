@@ -4,6 +4,7 @@ FROM ubuntu:latest
 ADD sources.list /etc/apt/sources.list
 
 # Update apt
+SHELL [ "/bin/bash", "-c" ]
 RUN apt update && apt upgrade -y
 
 # Install bascic tools
@@ -11,7 +12,7 @@ RUN apt install -y curl wget git vim zsh zip unzip sed
 
 # Init config dir
 RUN mkdir -p /root/.config
-VOLUME [ "/root/.config", "/root/.vscode-server/extensions", "/root/.local/share/pnpm", "/root/go/bin", "/root/.ssh" ]
+VOLUME [ "/root/.config", "/root/.vscode-server/extensions", "/root/.local/share/pnpm", "/root/go/bin", "/root/.ssh", "/root/.m2/repository" ]
 
 # Install oh-my-zsh
 ARG ZSH_CUSTOM=/root/.oh-my-zsh/custom
@@ -56,6 +57,7 @@ RUN bash /tmp/pyenv-installer.sh \
     && pyenv global $PYTHON_VERSION \
     && pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
     && curl -sSL https://install.python-poetry.org | python3 - \
+    && export PATH="/root/.local/bin:$PATH" \ 
     && poetry config virtualenvs.in-project true 
 
 # Install rust
@@ -65,6 +67,14 @@ ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 ENV CARGO_HTTP_MULTIPLEXING=false
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+# Install sdkman
+ARG SDKMAN_DIR=/root/.sdkman
+RUN curl -s "https://get.sdkman.io" | bash \
+    && . $SDKMAN_DIR/bin/sdkman-init.sh \
+    && sdk list java 17.0.5-oracle \
+    && sdk list maven 3.8.6 \
+    && sdk list gradle 7.6
 
 # Change default shell
 ADD .zshrc /root/.zshrc
