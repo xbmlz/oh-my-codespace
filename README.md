@@ -1,11 +1,11 @@
-# oh-my-env
+# oh-my-codespace
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/xbmlz/oh-my-env/release.yml?style=flat-square)
-![Docker Image Version (latest by date)](https://img.shields.io/docker/v/xbmlz/oh-my-env?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/xbmlz/oh-my-codespace/release.yml?style=flat-square)
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/xbmlz/ohmycs?style=flat-square)
 
-## What is oh-my-env?
+## What is oh-my-codespace?
 
-oh-my-env is docker image for development environment.
+`oh-my-codespace` is docker image for development environment.
 
 ## Features
 

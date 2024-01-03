@@ -1,86 +1,46 @@
-FROM ubuntu:latest
+FROM archlinux:base
 
-# Change apt source
-ADD sources.list /etc/apt/sources.list
+WORKDIR /tmp
 
-# Update apt
-RUN apt update && apt upgrade -y
-
-# Install bascic tools
-RUN apt install -y curl wget git vim zsh zip unzip sed
+# Change pacman source
+ADD mirrorlist /etc/pacman.d/mirrorlist
+RUN yes | pacman -Syu
+RUN yes | pacman -S git which vim curl tree htop zsh
 
 # Init config dir
 RUN mkdir -p /root/.config
-VOLUME [ "/root/.config", "/root/.vscode-server/extensions", "/root/.local/share/pnpm", "/root/go/bin", "/root/.ssh", "/root/.m2/repository" ]
 
 # Install oh-my-zsh
-ARG ZSH_CUSTOM=/root/.oh-my-zsh/custom
-RUN git clone https://gitee.com/mirrors/ohmyzsh.git ~/.oh-my-zsh \
-    && git clone https://gitee.com/github-mirror-zsh/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1 \
+RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash \
+    && git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1 \
     && ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme" \
-    && git clone https://gitee.com/xbmlz/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions \
-    && git clone https://gitee.com/xbmlz/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting \
-    && git clone https://gitee.com/xbmlz/zsh-z.git $ZSH_CUSTOM/plugins/zsh-z
+    && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions \
+    && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting \
+    && git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
+
 
 # Install nvm and default node
-ARG NVM_DIR=/root/.nvm \
-    && NODE_VERSION=v16
-RUN curl https://gitee.com/mirrors/nvm/raw/master/install.sh | bash \
-    && . $NVM_DIR/nvm.sh \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default \
-    && npm install -g pnpm \
-    && pnpm config set store-dir /root/.local/share/pnpm
+ARG NODE_VERSION=18
+ENV PNPM_HOME /root/.local/share/pnpm
+ENV PATH $PNPM_HOME:$PATH
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash \
+    && nvm install $NODE_VERSION \
+    && nvm use $NODE_VERSION \
+    && corepack enable \
+    && pnpm setup
 
 # Install Go
-ARG GOPATH /root/go \
-    && GO_VERSION=1.18.9 
-RUN wget https://studygolang.com/dl/golang/go${GO_VERSION}.linux-amd64.tar.gz \
-    && tar -C /root -xzf go${GO_VERSION}.linux-amd64.tar.gz \
-    && rm go${GO_VERSION}.linux-amd64.tar.gz \
-    && mkdir -p $GOPATH/src $GOPATH/bin \
-    && export PATH=$PATH:/root/go/bin \
+ENV GOPATH /root/go
+ENV PATH $GOPATH/bin:$PATH
+RUN yes | pacman -S go
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+ENV GOROOT /usr/lib/go
+RUN go env -w GO111MODULE=on \
     && go env -w GOPROXY=https://goproxy.cn,direct
 
-# Install pyenv
-ARG PYENV_ROOT=/root/.pyenv \
-    && PYTHON_VERSION=3.9.7
-ENV PYTHON_BUILD_MIRROR_URL=https://npm.taobao.org/mirrors/python
-ADD pyenv-installer.sh /tmp/pyenv-installer.sh
-RUN bash /tmp/pyenv-installer.sh \
-    && export PATH="$PYENV_ROOT/bin:$PATH" \
-    && eval "$(pyenv init -)" \
-    && eval "$(pyenv virtualenv-init -)" \
-    && apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev liblzma-dev \
-    && pyenv install $PYTHON_VERSION \
-    && pyenv global $PYTHON_VERSION \
-    && pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
-    && curl -sSL https://install.python-poetry.org | python3 - \
-    && export PATH="/root/.local/bin:$PATH" \ 
-    && poetry config virtualenvs.in-project true 
 
-# Install rust
-ADD .cargo.cn.config /root/.cargo/config
-ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
-ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
-ENV CARGO_HTTP_MULTIPLEXING=false
-ENV PATH="/root/.cargo/bin:${PATH}"
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-# Install sdkman
-ARG SDKMAN_DIR=/root/.sdkman
-SHELL [ "/bin/bash", "-c" ]
-RUN curl -s "https://get.sdkman.io" | bash \
-    && . $SDKMAN_DIR/bin/sdkman-init.sh \
-    && sdk list java 17.0.5-oracle \
-    && sdk list maven 3.8.6 \
-    && sdk list gradle 7.6
-
-# Change default shell
+# Finsih config
 ADD .zshrc /root/.zshrc
 RUN chsh -s /bin/zsh
-
-# clean apt cache
-RUN apt autoremove -y \
-    && apt clean -y \
-    && rm -rf /var/lib/apt/lists/*
+RUN yes | pacman -Scc
+WORKDIR /home
